@@ -2346,7 +2346,7 @@
 											"script": {
 												"exec": [
 													"pm.collectionVariables.set(\"testData\", {",
-													"    responseStatusCode: 200, ",
+													"    responseStatusCode: 201, ",
 													"    requiredResponseTime: 200, ",
 													"    expectedContentType: \"application/json\"",
 													"});"
