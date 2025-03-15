@@ -1,0 +1,2717 @@
+{
+	"info": {
+		"_postman_id": "0ddc8011-13dc-4fd3-a669-07790ed1d84a",
+		"name": "booker-api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "17196171"
+	},
+	"item": [
+		{
+			"name": "HealthCheck",
+			"item": [
+				{
+					"name": "Ping",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"testData\", {",
+									"    responseStatusCode: 201, ",
+									"    requiredResponseTime: 200, ",
+									"});",
+									"",
+									"",
+									"",
+									"",
+									"// Setup Data",
+									"let salt = utils.randomString(8);",
+									"pm.collectionVariables.set(\"salt\", salt);",
+									"pm.collectionVariables.set(\"string100Length\", utils.randomString(100));",
+									"pm.collectionVariables.set(\"dateNow\", utils.getDate());",
+									"pm.collectionVariables.set(\"dateTomorrow\", utils.getDate(\"+1d\"));",
+									"pm.collectionVariables.set(\"dateYesterday\", utils.getDate(\"-1d\"));",
+									"",
+									"pm.collectionVariables.set(\"firstname\", \"Jhon \" + salt);",
+									"pm.collectionVariables.set(\"lastname\", \"Doe \" + salt);",
+									"pm.collectionVariables.set(\"randomPrice\", utils.randomNumber(4))",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/ping",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"ping"
+							]
+						},
+						"description": "Generated from cURL: curl -i https://restful-booker.herokuapp.com/ping"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Positive Tests",
+					"item": [
+						{
+							"name": "Create Token",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Validate token is present\", () => {",
+											"    pm.expect(jsonData).to.have.property(\"token\");",
+											"})",
+											"",
+											"pm.test(\"Validate token is not empty\", () => {",
+											"    pm.expect(jsonData.token).to.not.be.empty;",
+											"})",
+											"",
+											"pm.collectionVariables.set(\"token\", jsonData.token);",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"username\": \"{{username}}\",\n    \"password\": \"{{password}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									"let testData = {",
+									"    responseStatusCode: 200, ",
+									"    requiredResponseTime: 200, ",
+									"    expectedContentType: \"application/json\"",
+									"}",
+									"",
+									"pm.collectionVariables.set(\"testData\", testData);"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Negative Tests",
+					"item": [
+						{
+							"name": "Invalid username",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Validate reason is present\", () => {",
+											"    pm.expect(jsonData).to.have.property(\"reason\");",
+											"})",
+											"",
+											"pm.test(\"Validate reason is 'Bad credentials'\", () => {",
+											"    pm.expect(jsonData.reason).to.be.eql(\"Bad credentials\");",
+											"})",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"username\": \"wrong\",\n    \"password\": \"{{password}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid password",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Validate reason is present\", () => {",
+											"    pm.expect(jsonData).to.have.property(\"reason\");",
+											"})",
+											"",
+											"pm.test(\"Validate reason is 'Bad credentials'\", () => {",
+											"    pm.expect(jsonData.reason).to.be.eql(\"Bad credentials\");",
+											"})",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"username\": \"{{username}}\",\n    \"password\": \"invalid\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Missing username field",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Validate reason is present\", () => {",
+											"    pm.expect(jsonData).to.have.property(\"reason\");",
+											"})",
+											"",
+											"pm.test(\"Validate reason is 'Bad credentials'\", () => {",
+											"    pm.expect(jsonData.reason).to.be.eql(\"Bad credentials\");",
+											"})",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"password\": \"{{password}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Missing password field",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Validate reason is present\", () => {",
+											"    pm.expect(jsonData).to.have.property(\"reason\");",
+											"})",
+											"",
+											"pm.test(\"Validate reason is 'Bad credentials'\", () => {",
+											"    pm.expect(jsonData.reason).to.be.eql(\"Bad credentials\");",
+											"})",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"username\": \"{{username}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Boundary long username",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Validate reason is present\", () => {",
+											"    pm.expect(jsonData).to.have.property(\"reason\");",
+											"})",
+											"",
+											"pm.test(\"Validate reason is 'Bad credentials'\", () => {",
+											"    pm.expect(jsonData.reason).to.be.eql(\"Bad credentials\");",
+											"})",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \"username\": \"{{string100Length}}\", \"password\": \"password123\" }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									"let testData = {",
+									"    responseStatusCode: 401, ",
+									"    requiredResponseTime: 200, ",
+									"    expectedContentType: \"application/json\"",
+									"}",
+									"",
+									"pm.collectionVariables.set(\"testData\", testData);"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Stress",
+					"item": [
+						{
+							"name": "Oversized payload",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"let testData = {",
+											"    responseStatusCode: 413, ",
+											"    requiredResponseTime: 2000, ",
+											"    expectedContentType: \"text/plain\"",
+											"}",
+											"pm.collectionVariables.set(\"testData\", testData);",
+											"",
+											"pm.collectionVariables.set(\"10mbOfA\", 'A'.repeat(10 * 1024 * 1024)); // 10 MB of 'A's",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// let jsonData = pm.response.json();",
+											"",
+											"// pm.test(\"Validate reason is present\", () => {",
+											"//     pm.expect(jsonData).to.have.property(\"reason\");",
+											"// })",
+											"",
+											"// pm.test(\"Validate reason is 'Bad credentials'\", () => {",
+											"//     pm.expect(jsonData.reason).to.be.eql(\"Bad credentials\");",
+											"// })",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"username\": \"{{10mbOfA}}\",\n    \"password\": \"password123\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Booking",
+			"item": [
+				{
+					"name": "Create Booking",
+					"item": [
+						{
+							"name": "Positive Tests",
+							"item": [
+								{
+									"name": "Valid Booking",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"if(pm.response.code === 200) {",
+													"    let jsonData = pm.response.json();",
+													"",
+													"    pm.test(\"Validate bookingid is present\", () => {",
+													"        pm.expect(jsonData).to.have.property(\"bookingid\");",
+													"    });",
+													"",
+													"    pm.test(`Validate booking.firstname is correct `, () => {",
+													"        pm.expect(jsonData.booking.firstname).to.contains(pm.collectionVariables.get(\"salt\"));",
+													"    });",
+													"",
+													"    pm.collectionVariables.set(\"bookingId\", jsonData.bookingid);",
+													"    pm.collectionVariables.set(\"booking\", jsonData);",
+													"}"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"firstname\": \"{{firstname}}\",\n    \"lastname\": \"{{lastname}}\",\n    \"totalprice\": \"{{randomPrice}}\",\n    \"depositpaid\": {{$randomBoolean}},\n    \"bookingdates\": {\n        \"checkin\": \"{{dateNow}}\",\n        \"checkout\": \"{{dateTomorrow}}\"\n    },\n    \"additionalneeds\": \"{{$randomCatchPhrase}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/booking",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"booking"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Only required fields",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"if(pm.response.code === 200) {",
+													"    let jsonData = pm.response.json();",
+													"",
+													"    pm.test(\"Validate bookingid is present\", () => {",
+													"        pm.expect(jsonData).to.have.property(\"bookingid\");",
+													"    });",
+													"",
+													"    pm.test(`Validate booking.firstname is correct `, () => {",
+													"        pm.expect(jsonData.booking.firstname).to.contains(pm.collectionVariables.get(\"salt\"));",
+													"    });",
+													"",
+													"    pm.test(\"Validate additionalneeds is not present\", () => {",
+													"        pm.expect(jsonData.booking).to.not.have.property(\"additionalneeds\")",
+													"    })",
+													"}"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"firstname\": \"{{firstname}}\",\n    \"lastname\": \"{{lastname}}\",\n    \"totalprice\": \"{{randomPrice}}\",\n    \"depositpaid\": {{$randomBoolean}},\n    \"bookingdates\": {\n        \"checkin\": \"{{dateNow}}\",\n        \"checkout\": \"{{dateTomorrow}}\"\n    }\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/booking",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"booking"
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"auth": {
+								"type": "bearer",
+								"bearer": [
+									{
+										"key": "token",
+										"value": "{{token}}",
+										"type": "string"
+									}
+								]
+							},
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"type": "text/javascript",
+										"packages": {},
+										"exec": [
+											"let testData = {",
+											"    responseStatusCode: 200, ",
+											"    requiredResponseTime: 200, ",
+											"    expectedContentType: \"application/json\"",
+											"}",
+											"",
+											"pm.collectionVariables.set(\"testData\", testData);"
+										]
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"packages": {},
+										"exec": [
+											""
+										]
+									}
+								}
+							]
+						},
+						{
+							"name": "Negative Tests",
+							"item": [
+								{
+									"name": "Missing Firstname",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.collectionVariables.set(\"testData\", {",
+													"    responseStatusCode: 400, ",
+													"    requiredResponseTime: 200, ",
+													"    expectedContentType: \"application/json\",",
+													"    expectedErrorMessage: \"Missing required field 'firstname'\"",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"lastname\": \"{{lastname}}\",\n    \"totalprice\": \"{{randomPrice}}\",\n    \"depositpaid\": {{$randomBoolean}},\n    \"bookingdates\": {\n        \"checkin\": \"{{dateNow}}\",\n        \"checkout\": \"{{dateTomorrow}}\"\n    },\n    \"additionalneeds\": \"{{$randomCatchPhrase}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/booking",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"booking"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Checkout Before Checkin",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.collectionVariables.set(\"testData\", {",
+													"    responseStatusCode: 400, ",
+													"    requiredResponseTime: 200, ",
+													"    expectedContentType: \"application/json\",",
+													"    expectedErrorMessage: \"Checkin should be before Checkout\"",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"firstname\": \"{{firstname}}\",\n    \"lastname\": \"{{lastname}}\",\n    \"totalprice\": \"{{randomPrice}}\",\n    \"depositpaid\": {{$randomBoolean}},\n    \"bookingdates\": {\n        \"checkin\": \"{{dateTomorrow}}\",\n        \"checkout\": \"{{dateNow}}\"\n    },\n    \"additionalneeds\": \"{{$randomCatchPhrase}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/booking",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"booking"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Negative Price",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.collectionVariables.set(\"testData\", {",
+													"    responseStatusCode: 400, ",
+													"    requiredResponseTime: 200, ",
+													"    expectedContentType: \"application/json\",",
+													"    expectedErrorMessage: \"Price should be positve integer\"",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"firstname\": \"{{firstname}}\",\n    \"lastname\": \"{{lastname}}\",\n    \"totalprice\": \"-{{randomPrice}}\",\n    \"depositpaid\": {{$randomBoolean}},\n    \"bookingdates\": {\n        \"checkin\": \"{{dateNow}}\",\n        \"checkout\": \"{{dateTomorrow}}\"\n    },\n    \"additionalneeds\": \"{{$randomCatchPhrase}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/booking",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"booking"
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"type": "text/javascript",
+										"packages": {},
+										"exec": [
+											""
+										]
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"packages": {},
+										"exec": [
+											""
+										]
+									}
+								}
+							]
+						},
+						{
+							"name": "Boundary Tests",
+							"item": [
+								{
+									"name": "firstname empty",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.collectionVariables.set(\"testData\", {",
+													"    responseStatusCode: 400, ",
+													"    requiredResponseTime: 200, ",
+													"    expectedContentType: \"application/json\",",
+													"    expectedErrorMessage: \"'firstname' should not be empty\"",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"firstname\": \"\",\n    \"lastname\": \"{{lastname}}\",\n    \"totalprice\": \"{{randomPrice}}\",\n    \"depositpaid\": {{$randomBoolean}},\n    \"bookingdates\": {\n        \"checkin\": \"{{dateNow}}\",\n        \"checkout\": \"{{dateTomorrow}}\"\n    },\n    \"additionalneeds\": \"{{$randomCatchPhrase}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/booking",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"booking"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "lastname maximum length",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"if(pm.response.code === 200) {",
+													"    let jsonData = pm.response.json();",
+													"",
+													"    pm.test(\"Validate bookingid is present\", () => {",
+													"        pm.expect(jsonData).to.have.property(\"bookingid\");",
+													"    });",
+													"",
+													"    pm.test(`Validate booking.lastname is correct `, () => {",
+													"        pm.expect(jsonData.booking.lastname).to.contains(pm.collectionVariables.get(\"string100Length\"));",
+													"    });",
+													"}"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.collectionVariables.set(\"testData\", {",
+													"    responseStatusCode: 200, ",
+													"    requiredResponseTime: 200, ",
+													"    expectedContentType: \"application/json\"",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"firstname\": \"{{firstname}}\",\n    \"lastname\": \"{{string100Length}}\",\n    \"totalprice\": \"{{randomPrice}}\",\n    \"depositpaid\": {{$randomBoolean}},\n    \"bookingdates\": {\n        \"checkin\": \"{{dateNow}}\",\n        \"checkout\": \"{{dateTomorrow}}\"\n    },\n    \"additionalneeds\": \"{{$randomCatchPhrase}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/booking",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"booking"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Large Price",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"if(pm.response.code === 200) {",
+													"    let jsonData = pm.response.json();",
+													"",
+													"    pm.test(`Validate booking.totalprice is correct `, () => {",
+													"        let actualTotalPrice = jsonData.booking.totalprice.toString();",
+													"        pm.expect(actualTotalPrice).to.be.eql(\"99999999999999999999\");",
+													"    });",
+													"}"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.collectionVariables.set(\"testData\", {",
+													"    responseStatusCode: 200, ",
+													"    requiredResponseTime: 200, ",
+													"    expectedContentType: \"application/json\"",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"firstname\": \"{{firstname}}\",\n    \"lastname\": \"{{lastname}}\",\n    \"totalprice\": 99999999999999999999,\n    \"depositpaid\": {{$randomBoolean}},\n    \"bookingdates\": {\n        \"checkin\": \"{{dateNow}}\",\n        \"checkout\": \"{{dateNow}}\"\n    },\n    \"additionalneeds\": \"{{$randomCatchPhrase}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/booking",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"booking"
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"type": "text/javascript",
+										"packages": {},
+										"exec": [
+											""
+										]
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"packages": {},
+										"exec": [
+											""
+										]
+									}
+								}
+							]
+						},
+						{
+							"name": "Security Tests",
+							"item": [
+								{
+									"name": "Create Booking without Authorization",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.collectionVariables.set(\"testData\", {",
+													"    responseStatusCode: 403, ",
+													"    requiredResponseTime: 200, ",
+													"    expectedContentType: \"application/json\",",
+													"    expectedErrorMessage: \"Authorization missing\"",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "noauth"
+										},
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"firstname\": \"{{firstname}}\",\n    \"lastname\": \"{{lastname}}\",\n    \"totalprice\": \"{{randomPrice}}\",\n    \"depositpaid\": {{$randomBoolean}},\n    \"bookingdates\": {\n        \"checkin\": \"{{dateNow}}\",\n        \"checkout\": \"{{dateTomorrow}}\"\n    },\n    \"additionalneeds\": \"{{$randomCatchPhrase}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/booking",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"booking"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Get Booking by ID",
+					"item": [
+						{
+							"name": "Positive Tests",
+							"item": [
+								{
+									"name": "Booking by ID",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.collectionVariables.set(\"testData\", {",
+													"    responseStatusCode: 200, ",
+													"    requiredResponseTime: 200, ",
+													"    expectedContentType: \"application/json\"",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"if(pm.response.code === 200) {",
+													"    let jsonData = pm.response.json();",
+													"",
+													"    pm.test(`Validate firstname contains salt`, () => {",
+													"        pm.expect(jsonData.firstname).to.contains(pm.collectionVariables.get(\"salt\"));",
+													"    });",
+													"}"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/booking/{{bookingId}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"booking",
+												"{{bookingId}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Negative Tests",
+							"item": [
+								{
+									"name": "Booking non existing",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.collectionVariables.set(\"testData\", {",
+													"    responseStatusCode: 404, ",
+													"    requiredResponseTime: 200, ",
+													"    expectedContentType: \"text/plain\"",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/booking/999999999",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"booking",
+												"999999999"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Invalid Id",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.collectionVariables.set(\"testData\", {",
+													"    responseStatusCode: 400, ",
+													"    requiredResponseTime: 200, ",
+													"    expectedContentType: \"text/plain\"",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/booking/abc",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"booking",
+												"abc"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Boundary Test",
+							"item": [
+								{
+									"name": "Minimum Booking Id",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.collectionVariables.set(\"testData\", {",
+													"    responseStatusCode: 200, ",
+													"    requiredResponseTime: 200, ",
+													"    expectedContentType: \"application/json\"",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/booking/1",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"booking",
+												"1"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Max Integer ID",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.collectionVariables.set(\"testData\", {",
+													"    responseStatusCode: 404, ",
+													"    requiredResponseTime: 200, ",
+													"    expectedContentType: \"text/plain\"",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/booking/2147483647",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"booking",
+												"2147483647"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Get All Bookings",
+					"item": [
+						{
+							"name": "Positive Tests",
+							"item": [
+								{
+									"name": "All Bookings",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"if(pm.response.code === 200) {",
+													"    let jsonData = pm.response.json();",
+													"",
+													"    pm.test(`Validate booking created is in the list`, () => {",
+													"        let booking = jsonData.find(b => b.bookingid === pm.collectionVariables.get(\"bookingId\"));",
+													"        pm.expect(booking).to.not.be.undefined;",
+													"    });",
+													"}"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.collectionVariables.set(\"testData\", {",
+													"    responseStatusCode: 200, ",
+													"    requiredResponseTime: 200, ",
+													"    expectedContentType: \"application/json\"",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/booking",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"booking"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Bookings by firstname",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"if(pm.response.code === 200) {",
+													"    let jsonData = pm.response.json();",
+													"",
+													"    pm.test(`Validate booking created is in the list`, () => {",
+													"        let booking = jsonData.find(b => b.bookingid === pm.collectionVariables.get(\"bookingId\"));",
+													"        pm.expect(booking).to.not.be.undefined;",
+													"    });",
+													"}"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.collectionVariables.set(\"testData\", {",
+													"    responseStatusCode: 200, ",
+													"    requiredResponseTime: 200, ",
+													"    expectedContentType: \"application/json\"",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/booking?firstname={{firstname}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"booking"
+											],
+											"query": [
+												{
+													"key": "firstname",
+													"value": "{{firstname}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Bookings by lastname",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"if(pm.response.code === 200) {",
+													"    let jsonData = pm.response.json();",
+													"",
+													"    pm.test(`Validate booking created is in the list`, () => {",
+													"        let booking = jsonData.find(b => b.bookingid === pm.collectionVariables.get(\"bookingId\"));",
+													"        pm.expect(booking).to.not.be.undefined;",
+													"    });",
+													"}"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.collectionVariables.set(\"testData\", {",
+													"    responseStatusCode: 200, ",
+													"    requiredResponseTime: 200, ",
+													"    expectedContentType: \"application/json\"",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/booking?lastname={{lastname}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"booking"
+											],
+											"query": [
+												{
+													"key": "lastname",
+													"value": "{{lastname}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Bookings by checkin",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"if(pm.response.code === 200) {",
+													"    let jsonData = pm.response.json();",
+													"",
+													"    pm.test(`Validate booking created is in the list`, () => {",
+													"        let booking = jsonData.find(b => b.bookingid === pm.collectionVariables.get(\"bookingId\"));",
+													"        pm.expect(booking).to.not.be.undefined;",
+													"    });",
+													"}"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.collectionVariables.set(\"testData\", {",
+													"    responseStatusCode: 200, ",
+													"    requiredResponseTime: 200, ",
+													"    expectedContentType: \"application/json\"",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/booking?checkin={{dateYesterday}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"booking"
+											],
+											"query": [
+												{
+													"key": "checkin",
+													"value": "{{dateYesterday}}"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Negative Tests",
+							"item": [
+								{
+									"name": "Date invalid format",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"if(pm.response.code === 200) {",
+													"    let jsonData = pm.response.json();",
+													"",
+													"    pm.test(`Validate booking created is in the list`, () => {",
+													"        let booking = jsonData.find(b => b.bookingid === pm.collectionVariables.get(\"bookingId\"));",
+													"        pm.expect(booking).to.not.be.undefined;",
+													"    });",
+													"}"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.collectionVariables.set(\"testData\", {",
+													"    responseStatusCode: 400, ",
+													"    requiredResponseTime: 200",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/booking?checkin=invalid",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"booking"
+											],
+											"query": [
+												{
+													"key": "checkin",
+													"value": "invalid"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Update Booking",
+					"item": [
+						{
+							"name": "Postive Test",
+							"item": [
+								{
+									"name": "Update Booking",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"if(pm.response.code === 200) {",
+													"    let jsonData = pm.response.json();",
+													"",
+													"    pm.test(`Validate firstname is correct `, () => {",
+													"        pm.expect(jsonData.firstname).to.contains(pm.collectionVariables.get(\"salt\"));",
+													"    });",
+													"}"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.collectionVariables.set(\"testData\", {",
+													"    responseStatusCode: 200, ",
+													"    requiredResponseTime: 200, ",
+													"    expectedContentType: \"application/json\"",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{token}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Cookie",
+												"value": "token={{token}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"firstname\": \"{{firstname}}\",\n    \"lastname\": \"{{lastname}}\",\n    \"totalprice\": \"{{randomPrice}}\",\n    \"depositpaid\": {{$randomBoolean}},\n    \"bookingdates\": {\n        \"checkin\": \"{{dateNow}}\",\n        \"checkout\": \"{{dateTomorrow}}\"\n    },\n    \"additionalneeds\": \"{{$randomCatchPhrase}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/booking/{{bookingId}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"booking",
+												"{{bookingId}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Negative Tests",
+							"item": [
+								{
+									"name": "Update Non existing Booking",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.collectionVariables.set(\"testData\", {",
+													"    responseStatusCode: 404, ",
+													"    requiredResponseTime: 200",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{token}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Cookie",
+												"value": "token={{token}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"firstname\": \"{{firstname}}\",\n    \"lastname\": \"{{lastname}}\",\n    \"totalprice\": \"{{randomPrice}}\",\n    \"depositpaid\": {{$randomBoolean}},\n    \"bookingdates\": {\n        \"checkin\": \"{{dateNow}}\",\n        \"checkout\": \"{{dateTomorrow}}\"\n    },\n    \"additionalneeds\": \"{{$randomCatchPhrase}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/booking/999999",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"booking",
+												"999999"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Security Tests",
+							"item": [
+								{
+									"name": "Update Booking only with Authorization token",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"if(pm.response.code === 200) {",
+													"    let jsonData = pm.response.json();",
+													"",
+													"    pm.test(`Validate firstname is correct `, () => {",
+													"        pm.expect(jsonData.firstname).to.contains(pm.collectionVariables.get(\"salt\"));",
+													"    });",
+													"}"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.collectionVariables.set(\"testData\", {",
+													"    responseStatusCode: 200, ",
+													"    requiredResponseTime: 200, ",
+													"    expectedContentType: \"application/json\"",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{token}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Cookie",
+												"value": "token={{token}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"firstname\": \"{{firstname}}\",\n    \"lastname\": \"{{lastname}}\",\n    \"totalprice\": \"{{randomPrice}}\",\n    \"depositpaid\": {{$randomBoolean}},\n    \"bookingdates\": {\n        \"checkin\": \"{{dateNow}}\",\n        \"checkout\": \"{{dateTomorrow}}\"\n    },\n    \"additionalneeds\": \"{{$randomCatchPhrase}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/booking/{{bookingId}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"booking",
+												"{{bookingId}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Update Booking only with Cookie",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"if(pm.response.code === 200) {",
+													"    let jsonData = pm.response.json();",
+													"",
+													"    pm.test(`Validate firstname is correct `, () => {",
+													"        pm.expect(jsonData.firstname).to.contains(pm.collectionVariables.get(\"salt\"));",
+													"    });",
+													"}"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.collectionVariables.set(\"testData\", {",
+													"    responseStatusCode: 200, ",
+													"    requiredResponseTime: 200, ",
+													"    expectedContentType: \"application/json\"",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "noauth"
+										},
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Cookie",
+												"value": "token={{token}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"firstname\": \"{{firstname}}\",\n    \"lastname\": \"{{lastname}}\",\n    \"totalprice\": \"{{randomPrice}}\",\n    \"depositpaid\": {{$randomBoolean}},\n    \"bookingdates\": {\n        \"checkin\": \"{{dateNow}}\",\n        \"checkout\": \"{{dateTomorrow}}\"\n    },\n    \"additionalneeds\": \"{{$randomCatchPhrase}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/booking/{{bookingId}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"booking",
+												"{{bookingId}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Update Booking without Authorization",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.collectionVariables.set(\"testData\", {",
+													"    responseStatusCode: 403, ",
+													"    requiredResponseTime: 200, ",
+													"    expectedContentType: \"text/plain\"",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "noauth"
+										},
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Cookie",
+												"value": "token={{token}}",
+												"type": "text",
+												"disabled": true
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"firstname\": \"{{firstname}}\",\n    \"lastname\": \"{{lastname}}\",\n    \"totalprice\": \"{{randomPrice}}\",\n    \"depositpaid\": {{$randomBoolean}},\n    \"bookingdates\": {\n        \"checkin\": \"{{dateNow}}\",\n        \"checkout\": \"{{dateTomorrow}}\"\n    },\n    \"additionalneeds\": \"{{$randomCatchPhrase}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/booking/{{bookingId}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"booking",
+												"{{bookingId}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Partial Update Booking",
+					"item": [
+						{
+							"name": "Postive Test",
+							"item": [
+								{
+									"name": "Partial Update Booking",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.collectionVariables.set(\"testData\", {",
+													"    responseStatusCode: 200, ",
+													"    requiredResponseTime: 200, ",
+													"    expectedContentType: \"application/json\"",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{token}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Cookie",
+												"value": "token={{token}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"additionalneeds\": \"{{$randomCatchPhrase}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/booking/{{bookingId}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"booking",
+												"{{bookingId}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Negative Tests",
+							"item": [
+								{
+									"name": "Update non existing fields",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.collectionVariables.set(\"testData\", {",
+													"    responseStatusCode: 400, ",
+													"    requiredResponseTime: 200",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{token}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Cookie",
+												"value": "token={{token}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"randomField\": \"{{randomPrice}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/booking/{{bookingId}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"booking",
+												"{{bookingId}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Security Tests",
+							"item": [
+								{
+									"name": "Partial Update Booking without Authorization",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.collectionVariables.set(\"testData\", {",
+													"    responseStatusCode: 403, ",
+													"    requiredResponseTime: 200, ",
+													"    expectedContentType: \"text/plain\"",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "noauth"
+										},
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Cookie",
+												"value": "token={{token}}",
+												"type": "text",
+												"disabled": true
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"depositpaid\": \"{{$randomBoolean}}\"\n}\n",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/booking/{{bookingId}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"booking",
+												"{{bookingId}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Delete Booking",
+					"item": [
+						{
+							"name": "Postive Test",
+							"item": [
+								{
+									"name": "Delete Booking",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"aif(pm.response.code === 200) {",
+													"    let jsonData = pm.response.json();",
+													"",
+													"    pm.test(`Validate booking created is not in the list`, () => {",
+													"        let booking = jsonData.find(b => b.bookingid === pm.collectionVariables.get(\"bookingId\"));",
+													"        pm.expect(booking).to.be.undefined;",
+													"    });",
+													"}"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.collectionVariables.set(\"testData\", {",
+													"    responseStatusCode: 200, ",
+													"    requiredResponseTime: 200, ",
+													"    expectedContentType: \"application/json\"",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{token}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Cookie",
+												"value": "token={{token}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/booking/{{bookingId}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"booking",
+												"{{bookingId}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Negative Tests",
+							"item": [
+								{
+									"name": "Delete non existing booking",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.collectionVariables.set(\"testData\", {",
+													"    responseStatusCode: 404, ",
+													"    requiredResponseTime: 200",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{token}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Cookie",
+												"value": "token={{token}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/booking/999999",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"booking",
+												"999999"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Security Tests",
+							"item": [
+								{
+									"name": "Delete Booking without Authorization",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.collectionVariables.set(\"testData\", {",
+													"    responseStatusCode: 403, ",
+													"    requiredResponseTime: 200, ",
+													"    expectedContentType: \"text/plain\"",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "noauth"
+										},
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Cookie",
+												"value": "token={{token}}",
+												"type": "text",
+												"disabled": true
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/booking/{{bookingId}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"booking",
+												"{{bookingId}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"function randomNumber (length) {",
+					"    const charset = '0123456789';",
+					"    let response = '';",
+					"    for (let i = 0; i < length; i++) {",
+					"        const randomIndex = Math.floor(Math.random() * charset.length);",
+					"        response += charset.charAt(randomIndex);",
+					"    }",
+					"    return response;",
+					"}",
+					"",
+					"function getDate(offset) {",
+					"        const date = new Date();",
+					"        if (!offset) {",
+					"            return date.toISOString().split(\"T\")[0];",
+					"        }",
+					"",
+					"        // Parse the offset string",
+					"        const regex = /([+-]?\\d+)([dwhyms])/g;",
+					"        let match;",
+					"        while ((match = regex.exec(offset)) !== null) {",
+					"            const value = parseInt(match[1]);",
+					"            const unit = match[2];",
+					"            switch (unit) {",
+					"                case 'd':",
+					"                    date.setDate(date.getDate() + value);",
+					"                    break;",
+					"                case 'w':",
+					"                    date.setDate(date.getDate() + value * 7);",
+					"                    break;",
+					"                case 'h':",
+					"                    date.setHours(date.getHours() + value);",
+					"                    break;",
+					"                case 'm':",
+					"                    date.setMinutes(date.getMinutes() + value);",
+					"                    break;",
+					"                case 's':",
+					"                    date.setSeconds(date.getSeconds() + value);",
+					"                    break;",
+					"                case 'y':",
+					"                    date.setFullYear(date.getFullYear() + value);",
+					"                    break;",
+					"            }",
+					"        }",
+					"        return date.toISOString().split(\"T\")[0];",
+					"}",
+					"",
+					"function randomString(length) {",
+					"    const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';",
+					"    let salt = '';",
+					"    for (let i = 0; i < length; i++) {",
+					"        const randomIndex = Math.floor(Math.random() * charset.length);",
+					"        salt += charset.charAt(randomIndex);",
+					"    }",
+					"    return salt;",
+					"}",
+					"",
+					"",
+					"utils = {",
+					"    randomString: function(length) {",
+					"        return randomString(length);",
+					"    },",
+					"    randomNumber: function(length) {",
+					"        return randomNumber(length)",
+					"    },",
+					"    getDate: function(offset) {",
+					"        return getDate(offset);",
+					"    }",
+					"}",
+					"",
+					"",
+					"",
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"if(pm.collectionVariables.get(\"testData\")) {",
+					"    let { ",
+					"        responseStatusCode, ",
+					"        requiredResponseTime, ",
+					"        expectedContentType, ",
+					"        expectedErrorMessage ",
+					"        } = pm.collectionVariables.get(\"testData\");",
+					"",
+					"    // Validate response headers",
+					"   if(expectedContentType) {",
+					"    pm.test(\"Validate Content-Type is \" + expectedContentType, function () {",
+					"        pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(expectedContentType);",
+					"    });",
+					"   }",
+					"",
+					"    // Validate response code",
+					"    pm.test(\"Validate response status code is \" + responseStatusCode, () => {",
+					"        pm.response.to.have.status(parseInt(responseStatusCode));",
+					"    });",
+					"",
+					"    // Validate response time",
+					"    if(requiredResponseTime){",
+					"        pm.test(\"Validate response time is less than \" + requiredResponseTime + \"ms\", () => {",
+					"        let responseTime = pm.response.responseTime;",
+					"        pm.expect(responseTime).to.be.below(requiredResponseTime);",
+					"    });",
+					"    }",
+					"",
+					"    // Validate error message in response body",
+					"    if (expectedErrorMessage) {",
+					"        pm.test(\"Validate error message is: \" + expectedErrorMessage, () => {",
+					"            let jsonData = pm.response.json();",
+					"",
+					"            if (jsonData.errorMessage === undefined) {",
+					"                throw Error(\"Not Error response found\")",
+					"            }",
+					"            ",
+					"            pm.expect(jsonData.message.defaultMessage).to.eql(expectedErrorMessage);",
+					"        });",
+					"    }",
+					"}",
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "testData",
+			"value": ""
+		},
+		{
+			"key": "token",
+			"value": ""
+		},
+		{
+			"key": "string100Length",
+			"value": ""
+		},
+		{
+			"key": "10mbOfA",
+			"value": ""
+		},
+		{
+			"key": "dateNow",
+			"value": ""
+		},
+		{
+			"key": "dateTomorrow",
+			"value": ""
+		},
+		{
+			"key": "salt",
+			"value": ""
+		},
+		{
+			"key": "firstname",
+			"value": ""
+		},
+		{
+			"key": "lastname",
+			"value": ""
+		},
+		{
+			"key": "price",
+			"value": ""
+		},
+		{
+			"key": "random",
+			"value": ""
+		},
+		{
+			"key": "bookingId",
+			"value": ""
+		},
+		{
+			"key": "randomPrice",
+			"value": ""
+		},
+		{
+			"key": "booking",
+			"value": ""
+		},
+		{
+			"key": "dateYesterday",
+			"value": ""
+		}
+	]
+}
