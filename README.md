@@ -33,7 +33,7 @@ Ensure you have the following installed:
 
 ### Clone the Repository
 ```sh
-git clone https://github.com/figuedmundo/medirect-postman-framework.git & cd medirect-postman-framework
+git clone https://github.com/figuedmundo/medirect-postman-framework.git && cd medirect-postman-framework
 ```
 
 ### Install dependencies

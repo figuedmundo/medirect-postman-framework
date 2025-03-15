@@ -23,12 +23,27 @@ jobs:
       - name: Run Postman tests with Newman
         run: npm run test
 
+      # - name: Find Latest Report File
+      #   id: find-report
+      #   run: echo "REPORT_FILE=$(ls -t reports/report_*.html | head -n 1)" >> $GITHUB_ENV
+
+      - name: Verify Report Exists
+        run: ls -l reports/
+
       - name: Find Latest Report File
         id: find-report
-        run: echo "REPORT_FILE=$(ls -t reports/report_*.html | head -n 1)" >> $GITHUB_ENV
+        run: |
+          echo "REPORT_FILE=$(ls -t reports/report_*.html | head -n 1)" >> $GITHUB_ENV
+
+      - name: Debug Report File
+        run: |
+          echo "Report File: $REPORT_FILE"
+        env:
+          REPORT_FILE: ${{ env.REPORT_FILE }}
+
 
       - name: Upload HTML Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: newman-report
           path: ${{ env.REPORT_FILE }}
