@@ -26,10 +26,13 @@ jobs:
       - name: Find Latest Report File
         id: find-report
         run: |
-          echo "REPORT_FILE=$(ls -t reports/report_*.html | head -n 1)" >> $GITHUB_ENV
+          REPORT_FILE=$(ls -t reports/report_*.html | head -n 1)
+          FILENAME=$(basename "$REPORT_FILE")
+          echo "REPORT_FILE=$REPORT_FILE" >> $GITHUB_ENV
+          echo "FILENAME=$FILENAME" >> $GITHUB_ENV
 
       - name: Upload HTML Report
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.REPORT_FILE }}
+          name: ${{ env.FILENAME }}
           path: ${{ env.REPORT_FILE }}
