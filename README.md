@@ -55,6 +55,7 @@ report_YYYY-MM-DD_HH-MM-SS.html
 ## CI/CD Integration
 This project includes a GitHub Actions workflow for running the tests in a CI/CD pipeline. The workflow is defined in [`.github/workflows/api-tests.yml`](.github/workflows/api-tests.yml).
 
+The test results html is saved as artifact everytime new code is pushed to main branch
 
 ## Workflow Steps
 1. **Checkout repo**: Checks out the repository.
