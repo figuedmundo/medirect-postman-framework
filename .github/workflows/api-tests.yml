@@ -1,0 +1,34 @@
+name: API Tests
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Postman tests with Newman
+        run: npm run test
+
+      - name: Find Latest Report File
+        id: find-report
+        run: echo "REPORT_FILE=$(ls -t reports/report_*.html | head -n 1)" >> $GITHUB_ENV
+
+      - name: Upload HTML Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: newman-report
+          path: ${{ env.REPORT_FILE }}
