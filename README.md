@@ -57,6 +57,8 @@ This project includes a GitHub Actions workflow for running the tests in a CI/CD
 
 The test results html is saved as artifact everytime new code is pushed to main branch
 
+"Hint: Go to the Actions tab in the GitHub repository, select the last run, and re-run the job. A new artifact will be uploaded."
+
 ## Workflow Steps
 1. **Checkout repo**: Checks out the repository.
 2. **Install dependencies**: Installs the project dependencies.
